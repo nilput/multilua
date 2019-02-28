@@ -1,5 +1,5 @@
-SCRIPT_NAME = 'script_a'
 function script_a_update(data)
+    local SCRIPT_NAME = 'script_a'
     if not data.i then
         data.i = 0
     end

@@ -18,7 +18,7 @@ void die(const char *fmt, ...) {
 }
 
 #define NCPU 4
-#define CREATE_N_OBJECTS 100
+#define CREATE_N_OBJECTS 10000
 
 void *xmalloc(size_t sz) {
     void *mm = malloc(sz);
@@ -73,16 +73,13 @@ struct lua_state_bundle {
 } lstates[NCPU];
 
 
-pthread_mutex_t print_lock = PTHREAD_MUTEX_INITIALIZER;
 int lua_stop = 0; //can be called from a script to stop updating
 
 int locked_print_l(lua_State *L) {
-    pthread_mutex_lock(&print_lock);
     const char *to_print = "error, expecting string";
     if (lua_isstring(L, 1))
         to_print = lua_tostring(L, 1);
     fprintf(stdout, "%s\n", to_print);
-    pthread_mutex_unlock(&print_lock);
     return 0;
 }
 int lua_stop_l(lua_State *L) {
@@ -150,6 +147,7 @@ void *lua_worker(void *data) {
             }
         }
     }
+    printf("worker %ld done\n", bundle->worker_id);
     return NULL;
 }
 
